@@ -1,49 +1,50 @@
 function test(){
-    var n = document.getElementById("name").value;
+    var name = document.getElementById("name").value;
     var email = document.getElementById("email").value;
     var mobile = document.getElementById("mobile").value;
     
-    // Storing data in local storage
-    localStorage.setItem("n", n);
-    localStorage.setItem("email", email);
-    localStorage.setItem("mobile", mobile);
+    //storing data in local storage
+    var user = localStorage.setItem("name",name);
+    var em = localStorage.setItem("email",email);
+    var mb = localStorage.setItem("mobile",mobile);
     
-    // Displaying the data
-    var displayDiv = document.getElementById("displayData");
-    var dataDiv = document.createElement("div");
-    dataDiv.innerHTML = "Name: " + n + "<br>Email: " + email + "<br>Mobile: " + mobile;
-    
-    // Create edit button
-    var editButton = document.createElement("button");
-    editButton.innerHTML = "Edit";
-    editButton.onclick = function() {
-        editData(n, email, mobile);
-    };
-    dataDiv.appendChild(editButton);
-    
-    // Create delete button
-    var deleteButton = document.createElement("button");
-    deleteButton.innerHTML = "Delete";
-    deleteButton.onclick = function() {
-        deleteData();
-    };
-    dataDiv.appendChild(deleteButton);
-    
-    displayDiv.appendChild(dataDiv);
+    //retrieving the data
+    var user = localStorage.getItem("n",n);
+    var em = localStorage.getItem("email",email);
+    var mb = localStorage.getItemet("mobile",mobile);
 }
+function displayExpenses() {
+    const expenseList = document.getElementById('appList');
+    let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+    
+    expenseList.innerHTML = '';
 
-function editData(name, email, mobile) {
-    // Implement editing functionality here
-    // For example, populate the form fields with the provided data for editing
-    document.getElementById("name").value = name;
-    document.getElementById("email").value = email;
-    document.getElementById("mobile").value = mobile;
-}
+    if (expenses.length > 0) {
+      expenses.forEach((expense, index) => {
+        const listItem = document.createElement('div');
+        listItem.className = 'card mb-2';
+        listItem.innerHTML = `
+          <div class="card-body">
+            <h5 class="card-title">${expense.description}</h5>
+            <p class="card-text">Amount: $${expense.amount} | Category: ${expense.category}</p>
+            <button type="button" class="btn btn-danger" onclick="deleteExpense(${index})">Delete</button>
+            <button type="button" class="btn btn-warning ml-2" onclick="editExpense(${index})">Edit</button>
+          </div>`;
+        expenseList.appendChild(listItem);
+      });
+    } else {
+      expenseList.innerHTML = '<p>No expenses yet.</p>';
+    }
+  }
+  function deleteExpense(index) {
+    let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+    expenses.splice(index, 1);
+    localStorage.setItem('expenses', JSON.stringify(expenses));
+    displayExpenses();
+  }
 
-function deleteData() {
-    // Implement deletion functionality here
-    // For example, remove the displayed data from the screen and clear local storage
-    var displayDiv = document.getElementById("displayData");
-    displayDiv.innerHTML = "";
-    localStorage.clear();
-}
+  // Function to delete all expenses
+  function deleteExpenses() {
+    localStorage.removeItem('expenses');
+    displayExpenses();
+  }
